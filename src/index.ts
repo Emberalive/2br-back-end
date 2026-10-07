@@ -1,11 +1,18 @@
 import express from 'express';
 import * as fs from 'node:fs';
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
-import cors = require('cors');
-import sqlite3 = require('sqlite3');
+import cors from 'cors';
+import sqlite3 from'sqlite3';
 
+const banner:string =
+`██████╗ ██████╗ ██████╗   ╔═════════╦═════════╗
+╚════██╗██╔══██╗██╔══██╗  ║ ═══════ ║ ═══════ ║
+ █████╔╝██████╔╝██████╔╝  ║ ═══════ ║ ═══════ ║
+██╔═══╝ ██╔══██╗██╔══██╗  ║ ═══════ ║ ═══════ ║
+███████╗██████╔╝██║  ██║  ║ ═══════ ║ ═══════ ║
+╚══════╝╚═════╝ ╚═╝  ╚═╝  ╚═════════╩═════════╝`
 const app = express()
-const db = new sqlite3.Database('2br')
+const db = new sqlite3.Database('2br.db')
 
 const port = 2000
 app.use(express.json())
@@ -16,6 +23,7 @@ app.use(cors({
 
 
 app.listen(port, async () => {
+    console.log(banner)
     console.log("Starting 2br...")
     console.log(`API Listening on port: ${port}`)
 
@@ -26,7 +34,7 @@ app.listen(port, async () => {
     console.log("Loading database from file")
     try {
         db.serialize(() => {
-            db.run(fs.readFileSync('../2br.sql', 'utf8'))
+            db.run(fs.readFileSync('/home/sammy/Development/2br-back-end/2br.sql', 'utf8'))
         })
     } catch (e) {
         console.log("Database could not be loaded\n:", e)

@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import { randomUUID as uuid } from 'node:crypto';
 
-const SESSIONS_FILE = './persistentData/sessions.json';
+const SESSIONS_FILE = '/home/sammy/Development/2br-back-end/src/persistentData/sessions.json';
 const SESSION_EXPIRY_HOURS = 24;
 
 export type Session = {
@@ -55,6 +55,7 @@ const deleteSession = (sessionId:string | string[]) => {
 export const cleanExpiredSessions = () => {
     console.log('[ Server - /cleanExpiredSessions] sessions expired are being cleaned')
     const sessions = readSessions();
+    if (!sessions) return
     const now = new Date();
     const valid = sessions.filter(s => new Date(s.expiresAt) > now);
     writeSessions(valid);
