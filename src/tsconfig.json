@@ -5,16 +5,11 @@
     "moduleResolution": "NodeNext",
     "rootDir": "src",
     "outDir": "dist",
-
     "strict": true,
     "esModuleInterop": true,
-    "verbatimModuleSyntax": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "sourceMap": true
   },
-  "include": [
-    ""
-  ]
+  "include": ["src"]
 }
