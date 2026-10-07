@@ -1,8 +1,11 @@
-import express from 'express';
+import express = require('express');
+import * as fs from 'node:fs';
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
-const app = express()
-const cors = require('cors')
+import cors = require('cors');
+import sqlite3 = require('sqlite3');
 
+const app = express()
+const db = new sqlite3.Database('2br')
 
 const port = 2000
 app.use(express.json())
@@ -20,4 +23,14 @@ app.listen(port, async () => {
     cleanExpiredSessions()
 // run every hour to clean expired sessions and ghost devices
     setInterval(cleanExpiredSessions, 60 * 60 * 1000);
+    console.log("Loading database from file")
+    try {
+        db.serialize(() => {
+            db.run(fs.readFileSync('../2br.sql', 'utf8'))
+        })
+    } catch (e) {
+        console.log("Database could not be loaded\n:", e)
+    }
+    console.log("Database has been loaded")
+    console.log("Server has been started")
 })
