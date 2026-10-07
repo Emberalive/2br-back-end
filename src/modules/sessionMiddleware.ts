@@ -34,4 +34,4 @@ const authenticate = async (req:Request, res:Response, next:NextFunction) => {
     next();
 };
 
-module.exports = { authenticate };
+// module.exports = { authenticate };

@@ -60,4 +60,4 @@ export const cleanExpiredSessions = () => {
     writeSessions(valid);
 };
 
-module.exports = { createSession, deleteSession, cleanExpiredSessions, getSession };
+// module.exports = { createSession, deleteSession, cleanExpiredSessions, getSession };
