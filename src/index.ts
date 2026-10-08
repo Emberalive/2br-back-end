@@ -3,6 +3,7 @@ import * as fs from 'node:fs';
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
 import cors from 'cors';
 import sqlite3 from'sqlite3';
+import bookRouter from '../src/routes/bookRoute.js';
 
 const banner:string =
 `██████╗ ██████╗ ██████╗   ╔═════════╦═════════╗
@@ -13,16 +14,20 @@ const banner:string =
 ╚══════╝╚═════╝ ╚═╝  ╚═╝  ╚═════════╩═════════╝`
 const app = express()
 const db = new sqlite3.Database('2br.db')
-
 const port = 2000
 app.use(express.json())
 app.use(cors({
     origin: "*",
     methods: ["GET", "HEAD", "OPTIONS", "POST","DELETE", "PATCH"],
 }));
+app.use('/book', bookRouter)
 
 
-app.listen(port, async () => {
+app.listen(port, (err?:Error) => {
+    if (err) {
+        console.error(`Failed to start on port ${port}:`, err);
+        process.exit(1);
+    }
     console.log(banner)
     console.log("Starting 2br...")
     console.log(`API Listening on port: ${port}`)

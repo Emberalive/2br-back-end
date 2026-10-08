@@ -1,10 +1,10 @@
 import { randomUUID as uuid } from 'node:crypto';
 
 
-type Book = {
+export type Book = {
     id: string;
     title: string;
-    author: string;
+    author: string[];
     cover: string;
 }
 
