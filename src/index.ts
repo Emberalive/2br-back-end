@@ -1,8 +1,8 @@
 import express from 'express';
-import * as fs from 'node:fs';
+import {initDb} from './modules/bd.js'
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
+import {c, logFormatError, logFormatWarning, logFormatSuccess} from './modules/textFormatting.js'
 import cors from 'cors';
-import sqlite3 from'sqlite3';
 import bookRouter from '../src/routes/bookRoute.js';
 
 const banner:string =
@@ -13,7 +13,6 @@ const banner:string =
 ███████╗██████╔╝██║  ██║  ║ ═══════ ║ ═══════ ║
 ╚══════╝╚═════╝ ╚═╝  ╚═╝  ╚═════════╩═════════╝`
 const app = express()
-const db = new sqlite3.Database('2br.db')
 const port = 2000
 app.use(express.json())
 app.use(cors({
@@ -25,25 +24,16 @@ app.use('/book', bookRouter)
 
 app.listen(port, (err?:Error) => {
     if (err) {
-        console.error(`Failed to start on port ${port}:`, err);
+        logFormatError(`Failed to start on port ${port}:`)
         process.exit(1);
     }
-    console.log(banner)
+    console.log(`${c.blue}${banner}${c.reset}`)
     console.log("Starting 2br...")
-    console.log(`API Listening on port: ${port}`)
-
+    console.log(`API Listening on port: ${c.blue}${port}${c.reset}`)
+    initDb()
+    logFormatSuccess("Server has been started")
     //clean all expired sessions on start up
     cleanExpiredSessions()
-// run every hour to clean expired sessions and ghost devices
+    // run every hour to clean expired sessions and ghost devices
     setInterval(cleanExpiredSessions, 60 * 60 * 1000);
-    console.log("Loading database from file")
-    try {
-        db.serialize(() => {
-            db.run(fs.readFileSync('/home/sammy/Development/2br-back-end/2br.sql', 'utf8'))
-        })
-    } catch (e) {
-        console.log("Database could not be loaded\n:", e)
-    }
-    console.log("Database has been loaded")
-    console.log("Server has been started")
 })
