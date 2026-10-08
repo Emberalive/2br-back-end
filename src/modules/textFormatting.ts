@@ -1,5 +1,3 @@
-import {styleText} from 'node:util'
-
 export const c = {
     reset: '\x1b[0m',
     bold: '\x1b[1m',
