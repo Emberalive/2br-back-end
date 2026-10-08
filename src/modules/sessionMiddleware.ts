@@ -7,7 +7,7 @@ import type { Request, Response, NextFunction } from 'express';
  * @param {import('express').Response} res
  * @param {import('express').NextFunction} next
  */
-const authenticate = async (req:Request, res:Response, next:NextFunction) => {
+export const authenticate = async (req:Request, res:Response, next:NextFunction) => {
     const sessionId: string | string[] | undefined = req.headers['x-session-id'];
 
     if (!sessionId) {
