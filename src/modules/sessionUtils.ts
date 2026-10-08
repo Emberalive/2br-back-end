@@ -31,7 +31,7 @@ const writeSessions = (sessions: Session[]): void => {
     fs.writeFileSync(SESSIONS_FILE, JSON.stringify({ sessions }, null, 2));
 };
 
-const createSession = (userId:string) => {
+export const createSession = (userId:string):string => {
     const sessions = readSessions();
 
     const session:Session = {

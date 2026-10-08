@@ -10,24 +10,25 @@ test('POST /book returns 201 and a book object', async (t) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            param: 'Lord of the rings'
+            param: 'The hobbit'
         })
     });
     const data = await res.json();
+    const book = data.book
 
     await t.test('returns 201', () => {
         assert.strictEqual(res.status, 201);
     });
     await t.test('title is a string', () => {
-        assert.strictEqual(typeof data.title, 'string');
+        assert.strictEqual(typeof book.title, 'string');
     });
     await t.test('author is an array', () => {
-        assert.strictEqual(Array.isArray(data.author), true)
+        assert.strictEqual(Array.isArray(book.author), true)
     })
     await t.test('cover is a string', () => {
-        assert.strictEqual(typeof data.cover, 'string');
+        assert.strictEqual(typeof book.cover, 'string');
     });
     await t.test('id is a string', () => {
-        assert.strictEqual(typeof data.id, 'string');
+        assert.strictEqual(typeof book.id, 'string');
     });
 })
