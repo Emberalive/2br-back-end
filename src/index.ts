@@ -1,7 +1,7 @@
 import express from 'express';
 import {initDb} from './modules/bd.js'
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
-import {c, logFormatError, logFormatWarning, logFormatSuccess} from './modules/textFormatting.js'
+import {c, logFormatError, logFormatSuccess} from './modules/textFormatting.js'
 import cors from 'cors';
 import bookRouter from '../src/routes/bookRoute.js';
 

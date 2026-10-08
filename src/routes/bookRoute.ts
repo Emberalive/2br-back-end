@@ -1,4 +1,6 @@
 import express from "express";
+import {bookInsert} from '../modules/bd.js'
+import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} from '../modules/textFormatting.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
 import type { Request, Response } from 'express';
 
@@ -9,22 +11,26 @@ const router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
     console.log('[Server POST - /book] STARTING')
-    const {param} = req.body;
+    const param = req.body.param;
     if (!param) {
-        console.log('[Server - /book] No parameter sent');
+        logFormatError('[Server - /book] No parameter sent');
         return res.status(400).send("Invalid parameter");
     }
     if (typeof param !== 'number' && typeof param !== 'string') {
-        console.log(`[Server - /book] invalid parameter type: ${param}`);
+        logFormatError(`[Server - /book] invalid parameter type: ${JSON.stringify(param)}`);
         return res.status(400).json({ error: 'value must be a number or string' });
     }
-    console.log('[Server - /book] parameters are valid')
+    logFormatSuccess('[Server - /book] parameters are valid')
     const data = await bookInfo(param)
     if (!data) {
-        console.log('[Server - /addBook] No book data returned')
+        logFormatWarning('[Server - /addBook] No book data returned')
         return res.status(400).send("Invalid book info");
     }
-    console.log(`[Server - /book] Book:\n${JSON.stringify(data, null, 2)}`);
+    logFormatProcess(`[Server - /book] Book:\n${JSON.stringify(data, null, 2)}`);
+    if (!data) {
+        return res.status(404).send("no Book found");
+    }
+    bookInsert(data.id, data.author, data.title, data.cover)
     /**
      * Need to add it to the database and
      * check it's been added before returning

@@ -10,7 +10,7 @@ test('POST /book returns 201 and a book object', async (t) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            param: 'The hobbit'
+            param: 'The Hobbit'
         })
     });
     const data = await res.json();

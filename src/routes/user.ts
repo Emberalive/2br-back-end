@@ -1,4 +1,5 @@
-import {genSaltSync, hashSync, compare} from 'bcrypt-ts'
+import {hashSync, compare} from 'bcrypt-ts'
+import {type UserFrontEnd} from '../modules/types.js'
 import { randomUUID as uuid } from 'node:crypto';
 import {createSession} from '../modules/sessionUtils.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
@@ -10,10 +11,6 @@ type User = {
     id: string;
     username: string;
     password: string;
-}
-type UserFrontEnd = {
-    id: string;
-    username: string;
 }
 type UserLogin = {
     username: string;

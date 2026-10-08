@@ -1,14 +1,7 @@
 import { randomUUID as uuid } from 'node:crypto';
+import {type Book} from './types.js';
 
-
-export type Book = {
-    id: string;
-    title: string;
-    author: string[];
-    cover: string;
-}
-
-export async function bookInfo(param: number | string): Promise<Book | boolean> {
+export async function bookInfo(param: number | string): Promise<Book | void> {
     let response: Response;
     const headers = {
         "User-Agent": '2br samueltsutcliffe@gmail.com'
@@ -18,9 +11,9 @@ export async function bookInfo(param: number | string): Promise<Book | boolean> 
     } else {
         response = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(param)}`, {headers: headers})
     }
-    if (!response.ok) return false
+    if (!response.ok) return
     const data = await response.json();
-    if (!data.docs[0]) return false
+    if (!data.docs[0]) return
     return {
         id: uuid(),
         title: typeof param === "string" ? param : data.dosc[0].title,

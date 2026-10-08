@@ -1,6 +1,6 @@
 import fs from "node:fs";
+import {type FuncResponse} from './types.js'
 import { DatabaseSync,  type SQLInputValue } from 'node:sqlite';
-import { randomUUID as uuid } from 'node:crypto';
 import {logFormatProcess, logFormatError, logFormatSuccess} from './textFormatting.js'
 
 export const db = new DatabaseSync('2br.db');
@@ -12,14 +12,12 @@ db.exec('PRAGMA foreign_keys = ON');
 const insertRows: Record<string, string[]> = {
     book: ['id', 'title', 'cover'],
     user: ['id', 'username', 'password'],
-    author: ['name'],
-    book_author: ['book_id', 'author_id']
 };
+// rows.book; // ['id', 'title', 'author', 'cover']
 
 
 type Table = keyof typeof insertRows;
 
-// rows.books; // ['id', 'title', 'author', 'cover']
 export function initDb():void {
     logFormatProcess('Loading database from file')
     try {
@@ -32,25 +30,45 @@ export function initDb():void {
     logFormatSuccess('Database has been loaded')
 }
 
-export function insert(table:Table, params:SQLInputValue[]): void {
-    if (table === "book") logFormatError('Please use bookInsert')
+export function insert(table:Table, params:SQLInputValue[]):FuncResponse {
     const columns = insertRows[table];
     const placeholders = Array(columns.length).fill('?').join(', ');
-    db.prepare(`INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`).run(...params)
+    try {
+        db.prepare(`INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`).run(...params)
+    } catch (e) {
+        logFormatError(`Could not insert into table: ${table} | ${e}`)
+        return  {
+            message: "could not insert into table",
+            success: false
+        }
+    }
+    logFormatSuccess(`Row has been inserted into table: ${table}`)
+    return {
+        success: true,
+        message: "Successfully inserted into table"
+    }
 }
 
-export function bookInsert (id:string, authors:string[], cover:string, title:string): void {
+export function bookInsert (id:string, authors:string[], cover:string, title:string): FuncResponse {
     db.exec('BEGIN')
     try {
         insert("book", [id, title, cover])
         for (const author of authors) {
-            db.prepare(`INSERT OR IGNORE author (id, name) VALUES(?, ?)`).run(uuid(), author)
-            db.prepare(`INSERT INTO book_author (book_id, author_id) SELECT ?, id FROM auther WHERE name = ?`)
+            db.prepare(`INSERT OR IGNORE INTO author (name) VALUES(?)`).run(author)
+            db.prepare(`INSERT INTO book_author (book_id, author_id) SELECT ?, id FROM author WHERE name = ?`)
                 .run(id, author)
         }
         db.exec('COMMIT')
-    } catch (e) {
+    } catch (err) {
         db.exec('ROLLBACK')
-        throw new Error('Database operation failed')
+        logFormatError(`Database operation failed: ${err}`)
+        return {
+            success: false,
+            message: "Could not insert book",
+        }
+    }
+    return {
+        success: true,
+        message: "Successfully inserted into book"
     }
 }
