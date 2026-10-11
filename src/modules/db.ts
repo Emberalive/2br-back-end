@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import {type FuncResponse} from './types.js'
+import {Book, type FuncResponse} from './types.js'
 import { DatabaseSync,  type SQLInputValue } from 'node:sqlite';
 import {logFormatProcess, logFormatError, logFormatSuccess} from './textFormatting.js'
 
@@ -28,6 +28,25 @@ export function initDb():void {
         return
     }
     logFormatSuccess('Database has been loaded')
+}
+
+export function selectAll(table:string) {
+    const stmnt:string = `SELECT * FROM ${table}`;
+    return db.prepare(stmnt).all();
+}
+
+export function selectAllBooks() {
+    const stmnt:string = `
+        SELECT b.id, b.title, b.cover, json_group_array(a.name) AS authors
+        FROM book b
+        JOIN book_author ba ON ba.book_id = b.id
+        JOIN author a ON a.id = ba.author_id
+        GROUP BY b.id
+    `;
+    return db.prepare(stmnt).all().map((row: any) => ({
+        ...row,
+            authors: JSON.parse(row.authors),
+    }));
 }
 
 export function insert(table:Table, params:SQLInputValue[]):FuncResponse {

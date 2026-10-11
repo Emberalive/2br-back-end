@@ -1,5 +1,5 @@
 import express from "express";
-import {bookInsert} from '../modules/bd.js'
+import {bookInsert, selectAll, selectAllBooks} from '../modules/db.js'
 import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} from '../modules/textFormatting.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
 import type { Request, Response } from 'express';
@@ -30,16 +30,19 @@ router.post('/', async (req: Request, res: Response) => {
     if (!data) {
         return res.status(404).send("no Book found");
     }
-    bookInsert(data.id, data.author, data.title, data.cover)
-    /**
-     * Need to add it to the database and
-     * check it's been added before returning
-     * if it is not added rollback()
-     * and return 500 internal error
-     */
+    bookInsert(data.id, data.author, data.cover, data.title)
     return res.status(201).send({
         book: data,
         success: true,
+    })
+})
+
+router.get('/getall', async (req: Request, res: Response) => {
+    const books = selectAllBooks()
+    logFormatProcess(`[Server - /book] Getall: ${JSON.stringify(books, null, 2)}`)
+    return res.status(200).send({
+        success: true,
+        books: books,
     })
 })
 
@@ -58,32 +61,40 @@ router.get('/:id', async (req: Request, res: Response) => {
             success: false
         });
     }
+    return res.status(501).send({
+        error: 'Not implemented',
+        success: false,
+    });
     /**
      * request from database
      * and return book object retrieved
      */
 })
 
-router.get('/getAll/:userId', async (req: Request, res: Response) => {
-    const id = req.params.userId;
-    if (!id) {
-        console.log('[Server GET - /book/getAll/:userId] ID is missing')
-        return res.status(400).send({
-            error: 'ID is missing',
-            success: false,
-        })
-    }
-    if (typeof id !== "string") {
-        console.log('[Server GET - /book/getAll/:userId] ID is not a string')
-        return res.status(400).send({
-            error: 'id must be a string',
-            success: false
-        })
-    }
-    /**
-     * get all user's books from the database
-     * and return retrieved
-     */
-})
+// router.get('/getAll/:userId', async (req: Request, res: Response) => {
+//     const id = req.params.userId;
+//     if (!id) {
+//         console.log('[Server GET - /book/getAll/:userId] ID is missing')
+//         return res.status(400).send({
+//             error: 'ID is missing',
+//             success: false,
+//         })
+//     }
+//     if (typeof id !== "string") {
+//         console.log('[Server GET - /book/getAll/:userId] ID is not a string')
+//         return res.status(400).send({
+//             error: 'id must be a string',
+//             success: false
+//         })
+//     }
+//     return res.status(501).send({
+//         error: 'Not implemented',
+//         success: false,
+//     });
+//     /**
+//      * get all user's books from the database
+//      * and return retrieved
+//      */
+// })
 
 export default router;

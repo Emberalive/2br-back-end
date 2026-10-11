@@ -1,5 +1,5 @@
 import express from 'express';
-import {initDb} from './modules/bd.js'
+import {initDb} from './modules/db.js'
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
 import {c, logFormatError, logFormatSuccess} from './modules/textFormatting.js'
 import cors from 'cors';
@@ -13,6 +13,11 @@ const banner:string =
 ███████╗██████╔╝██║  ██║  ║ ═══════ ║ ═══════ ║
 ╚══════╝╚═════╝ ╚═╝  ╚═╝  ╚═════════╩═════════╝`
 const app = express()
+
+app.use((req, res, next) => {
+    logFormatSuccess(`[Server - HTTP request] ${req.method} ${req.url}`); next();
+});
+
 const port = 2000
 app.use(express.json())
 app.use(cors({
