@@ -7,7 +7,7 @@ import type { Request, Response } from 'express';
 import {bookInfo} from "../modules/books.js"
 
 const router = express.Router();
-// router.use(authenticate)
+router.use(authenticate)
 
 router.post('/', async (req: Request, res: Response) => {
     console.log('[Server POST - /book] STARTING')

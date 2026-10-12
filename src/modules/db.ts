@@ -1,7 +1,7 @@
 import fs from "node:fs";
-import {Book, type FuncResponse} from './types.js'
-import { DatabaseSync,  type SQLInputValue } from 'node:sqlite';
-import {logFormatProcess, logFormatError, logFormatSuccess} from './textFormatting.js'
+import {type FuncResponse} from './types.js'
+import {DatabaseSync, type SQLInputValue} from 'node:sqlite';
+import {logFormatError, logFormatProcess, logFormatSuccess} from './textFormatting.js'
 
 export const db = new DatabaseSync('2br.db');
 db.exec('PRAGMA foreign_keys = ON');
@@ -28,6 +28,15 @@ export function initDb():void {
         return
     }
     logFormatSuccess('Database has been loaded')
+}
+
+export default function selectOne<T>(table:string, column:string, value:string): T | undefined {
+    const stmnt: string = `SELECT * FROM ${table} WHERE ${column} = ?`;
+    try {
+        return db.prepare(stmnt).get(value) as T | undefined
+    } catch (e) {
+        logFormatError(`[Server - selectOne] Query failed: ${e}`);
+    }
 }
 
 export function selectAll(table:string) {

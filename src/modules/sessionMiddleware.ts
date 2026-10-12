@@ -1,6 +1,9 @@
 import {getSession} from './sessionUtils.js';
 import type {Session} from './sessionUtils.js'
 import type { Request, Response, NextFunction } from 'express';
+import selectOne from "./db.js";
+import {type User} from "../routes/user.js";
+import {logFormatError, logFormatSuccess, logFormatWarning} from "./textFormatting.js";
 
 /**
  * @param {import('express').Request} req
@@ -11,14 +14,23 @@ export const authenticate = async (req:Request, res:Response, next:NextFunction)
     const sessionId: string | string[] | undefined = req.headers['x-session-id'];
 
     if (!sessionId) {
+        logFormatWarning('No session provided');
         return res.status(401).json({ success: false, error: 'No session provided' });
     }
 
-    const session:Promise<Session | false> = getSession(sessionId);
-    if (!session) {
+    const session:Session | false = await getSession(sessionId);
+    if (session === false) {
+        logFormatWarning('Invalid or expired session');
         return res.status(401).json({ success: false, error: 'Invalid or expired session' });
     }
 
+    const user:User | undefined = selectOne('user', 'id', session.userId)
+
+    if (!user) {
+        logFormatWarning('User not found');
+        return res.status(401).json({success: false, error: 'user not found'});
+    }
+    logFormatSuccess('session authenticated')
 
     /**
      * this below me will be gathered from the database not internal json storage

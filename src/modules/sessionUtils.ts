@@ -35,7 +35,7 @@ const writeSessions = (sessions: Session[]): void => {
 
 export const createSession = (userId:string):string => {
     const sessions = readSessions();
-
+    logFormatWarning(JSON.stringify(sessions, null, 2));
     const session:Session = {
         sessionId: uuid(),
         userId,

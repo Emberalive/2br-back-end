@@ -1,9 +1,12 @@
 import express from 'express';
 import {initDb} from './modules/db.js'
+import type { Request, Response } from 'express';
 import {cleanExpiredSessions} from './modules/sessionUtils.js'
 import {c, logFormatError, logFormatSuccess} from './modules/textFormatting.js'
 import cors from 'cors';
 import bookRouter from '../src/routes/bookRoute.js';
+import userRouter from '../src/routes/user.js'
+import {authenticate} from "./modules/sessionMiddleware.js";
 
 const banner:string =
 `██████╗ ██████╗ ██████╗   ╔═════════╦═════════╗
@@ -25,7 +28,11 @@ app.use(cors({
     methods: ["GET", "HEAD", "OPTIONS", "POST","DELETE", "PATCH"],
 }));
 app.use('/book', bookRouter)
+app.use('/user', userRouter)
 
+app.post('/authenticate', authenticate, (req:Request, res:Response) => {
+    return res.status(200).send({success: true})
+})
 
 app.listen(port, (err?:Error) => {
     if (err) {
