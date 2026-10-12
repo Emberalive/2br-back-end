@@ -13,7 +13,7 @@ export type Session = {
     expiresAt: string;
 }
 
-export const getSession = async (sessionId:string | string[]): Promise<Session | false> => {
+export const getSession = async (sessionId:string | string[] | undefined): Promise<Session | false> => {
     const sessions = readSessions();
     const session:Session | undefined = sessions.find(s => s.sessionId === sessionId);
     if (!session) return false;

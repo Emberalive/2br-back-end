@@ -1,7 +1,7 @@
 import express from 'express';
-import {initDb} from './modules/db.js'
+import selectOne, {initDb} from './modules/db.js'
 import type { Request, Response } from 'express';
-import {cleanExpiredSessions} from './modules/sessionUtils.js'
+import {cleanExpiredSessions, getSession} from './modules/sessionUtils.js'
 import {c, logFormatError, logFormatSuccess} from './modules/textFormatting.js'
 import cors from 'cors';
 import bookRouter from '../src/routes/bookRoute.js';
@@ -30,8 +30,11 @@ app.use(cors({
 app.use('/book', bookRouter)
 app.use('/user', userRouter)
 
-app.post('/authenticate', authenticate, (req:Request, res:Response) => {
-    return res.status(200).send({success: true})
+app.post('/authenticate', authenticate, async(req:Request, res:Response) => {
+    const session = await getSession(req.headers['x-session-id'])
+    if(session === false) return res.status(403).send('Not authorized')
+    const user = selectOne('user', 'id', session.userId)
+    return res.status(200).send({success: true, user: user})
 })
 
 app.listen(port, (err?:Error) => {
