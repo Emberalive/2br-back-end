@@ -19,7 +19,7 @@ create table if not exists book_user (
 create table if not exists review (
     id TEXT NOT NULL PRIMARY KEY,
     content TEXT NOT NULL,
-    book_id TEXT NOT NULL REFERENCES book(id)
+    book_id TEXT NOT NULL REFERENCES book(id),
     user_id TEXT NOT NULL REFERENCES user(id),
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
