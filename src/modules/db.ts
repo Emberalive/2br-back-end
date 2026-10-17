@@ -12,6 +12,8 @@ db.exec('PRAGMA foreign_keys = ON');
 const insertRows: Record<string, string[]> = {
     book: ['id', 'title', 'cover'],
     user: ['id', 'username', 'password'],
+    book_user: ['book_id', 'user_id'],
+    review: ['id', 'content', 'book_id', 'user_id', 'created_at'],
 };
 // rows.book; // ['id', 'title', 'author', 'cover']
 
@@ -77,14 +79,15 @@ export function insert(table:Table, params:SQLInputValue[]):FuncResponse {
     }
 }
 
-export function bookInsert (id:string, authors:string[], cover:string, title:string): FuncResponse {
+export function bookInsert (bookId:string, authors:string[], cover:string, title:string, userId:string): FuncResponse {
     db.exec('BEGIN')
     try {
-        insert("book", [id, title, cover])
+        insert("book", [bookId, title, cover])
+        insert("book_user", [bookId, userId])
         for (const author of authors) {
             db.prepare(`INSERT OR IGNORE INTO author (name) VALUES(?)`).run(author)
             db.prepare(`INSERT INTO book_author (book_id, author_id) SELECT ?, id FROM author WHERE name = ?`)
-                .run(id, author)
+                .run(bookId, author)
         }
         db.exec('COMMIT')
     } catch (err) {

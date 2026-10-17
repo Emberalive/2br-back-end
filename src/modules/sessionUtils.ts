@@ -14,6 +14,7 @@ export type Session = {
 }
 
 export const getSession = async (sessionId:string | string[] | undefined): Promise<Session | false> => {
+    if (!sessionId) return false;
     const sessions = readSessions();
     const session:Session | undefined = sessions.find(s => s.sessionId === sessionId);
     if (!session) return false;

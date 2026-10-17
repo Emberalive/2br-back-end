@@ -2,6 +2,7 @@ import express from "express";
 import {bookInsert, selectAll, selectAllBooks} from '../modules/db.js'
 import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} from '../modules/textFormatting.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
+import {getSession} from '../modules/sessionUtils.js'
 import type { Request, Response } from 'express';
 
 import {bookInfo} from "../modules/books.js"
@@ -30,7 +31,17 @@ router.post('/', async (req: Request, res: Response) => {
     if (!data) {
         return res.status(404).send("no Book found");
     }
-    bookInsert(data.id, data.author, data.cover, data.title)
+
+    const sessionObject = await getSession(req.headers['x-session-id'])
+    //only need to verify session exists so TypeScript knows it's not false
+    if (!sessionObject) {
+        return res.status(401).send({
+            success: false,
+            error: 'No session provided'
+        });
+    }
+
+    bookInsert(data.id, data.author, data.cover, data.title, sessionObject.userId)
     return res.status(201).send({
         book: data,
         success: true,
