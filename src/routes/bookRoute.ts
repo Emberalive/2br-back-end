@@ -1,5 +1,5 @@
 import express from "express";
-import {bookInsert, selectAll, selectAllBooks, selectAllUserBooks} from '../modules/db.js'
+import {bookInsert, selectAllBooks, selectAllUserBooks} from '../modules/db.js'
 import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} from '../modules/textFormatting.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
 import {getSession} from '../modules/sessionUtils.js'

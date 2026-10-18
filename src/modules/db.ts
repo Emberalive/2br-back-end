@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import {type FuncResponse} from './types.js'
-import {DatabaseSync, type SQLInputValue} from 'node:sqlite';
+import {type FuncResponse, queryResponse} from './types.js'
+import {DatabaseSync, type SQLInputValue, SQLOutputValue} from 'node:sqlite';
 import {logFormatError, logFormatProcess, logFormatSuccess} from './textFormatting.js'
 
 export const db = new DatabaseSync('2br.db');
@@ -13,7 +13,7 @@ const insertRows: Record<string, string[]> = {
     book: ['id', 'title', 'cover'],
     user: ['id', 'username', 'password'],
     book_user: ['book_id', 'user_id'],
-    review: ['id', 'content', 'book_id', 'user_id', 'created_at'],
+    review: ['id', 'content', 'book_id', 'user_id'],
 };
 // rows.book; // ['id', 'title', 'author', 'cover']
 
@@ -41,9 +41,37 @@ export default function selectOne<T>(table:string, column:string, value:string):
     }
 }
 
-export function selectAll(table:string) {
-    const stmnt:string = `SELECT * FROM ${table}`;
-    return db.prepare(stmnt).all();
+export function selectAll(table:string):queryResponse | FuncResponse {
+    try {
+        const stmnt:string = `SELECT * FROM ${table}`;
+        return {
+            rows: db.prepare(stmnt).all(),
+            success: true,
+        }
+    } catch (e) {
+        logFormatError(`[Server - selectOne] Query failed: ${e}`);
+        return {
+            success: false,
+            message: "Failed db read"
+        }
+    }
+}
+
+export function selectAllWhere(table:string, column:string, columnValue:string):queryResponse | FuncResponse {
+    try {
+        const stmnt:string = `SELECT * FROM ? WHERE ? = ?`;
+        return {
+            rows: db.prepare(stmnt).all(table, column, columnValue),
+            success: true,
+        }
+    } catch (e) {
+        logFormatError(`[Server - selectOne] Query failed: ${e}`);
+        return {
+            success: false,
+            message: "Failed db read"
+        }
+    }
+
 }
 
 export function selectAllBooks() {

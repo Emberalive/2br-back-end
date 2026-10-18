@@ -1,37 +1,15 @@
-import {hashSync, compare} from 'bcrypt-ts'
 import { randomUUID as uuid } from 'node:crypto';
 import {createSession} from '../modules/sessionUtils.js'
-import {authenticate} from '../modules/sessionMiddleware.js'
+import {checkPassword, createUser} from "../modules/user.js";
 import type { Request, Response } from 'express';
 import express from 'express';
-import selectOne, {insert} from '../modules/db.js'
+import {User} from "../modules/types.js";
+import selectOne from '../modules/db.js'
 const router = express.Router();
 
-export type User = {
-    id: string;
-    username: string;
-    password: string;
-}
 type UserLogin = {
     username: string;
     password: string;
-}
-
-function hashPassword(password: string): string {
-    return hashSync(password, 12);
-}
-
-function checkPassword(password: string, hashedPassword: string):Promise<boolean> {
-    return compare(password, hashedPassword);
-}
-
-function createUser(user:User):boolean | string {
-    const hash = hashPassword(user.password);
-    const success = insert('user', [user.id, user.username, hash]);
-    if (!success.success) {
-        return success.message;
-    }
-    return true
 }
 
 router.post('/login', async (req:Request, res:Response) => {

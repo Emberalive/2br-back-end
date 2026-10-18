@@ -6,6 +6,7 @@ import {c, logFormatError, logFormatSuccess} from './modules/textFormatting.js'
 import cors from 'cors';
 import bookRouter from '../src/routes/bookRoute.js';
 import userRouter from '../src/routes/user.js'
+import reviewRouter from '../src/routes/reviewRoutes.js'
 import {authenticate} from "./modules/sessionMiddleware.js";
 
 const banner:string =
@@ -29,6 +30,7 @@ app.use(cors({
 }));
 app.use('/book', bookRouter)
 app.use('/user', userRouter)
+app.use('/review', reviewRouter)
 
 app.post('/authenticate', authenticate, async(req:Request, res:Response) => {
     const session = await getSession(req.headers['x-session-id'])

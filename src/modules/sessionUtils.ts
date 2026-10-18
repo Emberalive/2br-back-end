@@ -1,17 +1,10 @@
 import * as fs from 'node:fs';
 import { randomUUID as uuid } from 'node:crypto';
 import {logFormatError, logFormatWarning, logFormatSuccess, logFormatProcess} from './textFormatting.js'
-
+import {type Session} from './types.js'
 
 const SESSIONS_FILE = '/home/sammy/Development/2br-back-end/src/persistentData/sessions.json';
 const SESSION_EXPIRY_HOURS = 24;
-
-export type Session = {
-    sessionId: string;
-    userId: string;
-    createdAt: string;
-    expiresAt: string;
-}
 
 export const getSession = async (sessionId:string | string[] | undefined): Promise<Session | false> => {
     if (!sessionId) return false;
