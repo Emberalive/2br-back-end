@@ -60,6 +60,21 @@ export function selectAllBooks() {
     }));
 }
 
+export function selectAllUserBooks(userId:string) {
+    const stmnt:string = `
+        SELECT b.id, b.title, b.cover, json_group_array(a.name) AS authors
+        FROM book b
+        JOIN book_author ba ON ba.book_id = b.id
+        JOIN author a ON a.id = ba.author_id
+        WHERE user_id = ?
+        GROUP BY b.id
+    `;
+    return db.prepare(stmnt).all(userId).map((row: any) => ({
+        ...row,
+        authors: JSON.parse(row.authors),
+    }));
+}
+
 export function insert(table:Table, params:SQLInputValue[]):FuncResponse {
     const columns = insertRows[table];
     const placeholders = Array(columns.length).fill('?').join(', ');

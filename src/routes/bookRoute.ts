@@ -1,10 +1,9 @@
 import express from "express";
-import {bookInsert, selectAll, selectAllBooks} from '../modules/db.js'
+import {bookInsert, selectAll, selectAllBooks, selectAllUserBooks} from '../modules/db.js'
 import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} from '../modules/textFormatting.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
 import {getSession} from '../modules/sessionUtils.js'
 import type { Request, Response } from 'express';
-
 import {bookInfo} from "../modules/books.js"
 
 const router = express.Router();
@@ -48,15 +47,6 @@ router.post('/', async (req: Request, res: Response) => {
     })
 })
 
-router.get('/getall', async (req: Request, res: Response) => {
-    const books = selectAllBooks()
-    logFormatProcess(`[Server - /book] Getall: ${JSON.stringify(books, null, 2)}`)
-    return res.status(200).send({
-        success: true,
-        books: books,
-    })
-})
-
 router.get('/:id', async (req: Request, res: Response) => {
     const id = req.params.id;
     if (!id) {
@@ -80,6 +70,30 @@ router.get('/:id', async (req: Request, res: Response) => {
      * request from database
      * and return book object retrieved
      */
+})
+
+router.get('/getall', async (req: Request, res: Response) => {
+    const books = selectAllBooks()
+    logFormatProcess(`[Server - /book] Getall: ${JSON.stringify(books, null, 2)}`)
+    return res.status(200).send({
+        success: true,
+        books: books,
+    })
+})
+
+router.get('/getall/user', async (req: Request, res: Response) => {
+    const sessionObject = await getSession(req.headers['x-session-id'])
+    if (!sessionObject) {
+        return res.status(401).send({
+            success: false,
+        })
+    }
+    const books = selectAllUserBooks(sessionObject.userId)
+    logFormatProcess(`[Server - /book] Getall: ${JSON.stringify(books, null, 2)}`)
+    return res.status(200).send({
+        success: true,
+        books: books,
+    })
 })
 
 // router.get('/getAll/:userId', async (req: Request, res: Response) => {
