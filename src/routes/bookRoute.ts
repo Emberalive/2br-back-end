@@ -14,21 +14,27 @@ router.post('/', async (req: Request, res: Response) => {
     const param = req.body.param;
     if (!param) {
         logFormatError('[Server - /book] No parameter sent');
-        return res.status(400).send("Invalid parameter");
+        return res.status(400).send({message: "Invalid parameter", success:false});
     }
     if (typeof param !== 'number' && typeof param !== 'string') {
         logFormatError(`[Server - /book] invalid parameter type: ${JSON.stringify(param)}`);
-        return res.status(400).json({ error: 'value must be a number or string' });
+        return res.status(400).json({ message: 'value must be a number or string', success: false });
     }
     logFormatSuccess('[Server - /book] parameters are valid')
     const data = await bookInfo(param)
     if (!data) {
         logFormatWarning('[Server - /addBook] No book data returned')
-        return res.status(400).send("Invalid book info");
+        return res.status(400).send({
+            success: false,
+            message:"Invalid book info"
+        });
     }
     logFormatProcess(`[Server - /book] Book:\n${JSON.stringify(data, null, 2)}`);
     if (!data) {
-        return res.status(404).send("no Book found");
+        return res.status(404).send({
+            success: false,
+            message: "no Book found"
+        });
     }
 
     const sessionObject = await getSession(req.headers['x-session-id'])

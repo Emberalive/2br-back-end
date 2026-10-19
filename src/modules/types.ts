@@ -37,7 +37,6 @@ export type User = {
     password: string;
 }
 
-export type queryResponse = {
-    rows:Record<string,SQLOutputValue>[] | string;
-    success: boolean;
-}
+export type QueryResult<T> =
+    | { success: true; rows: T[] }
+    | { success: false; message: string };

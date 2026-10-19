@@ -1,6 +1,6 @@
 import express from "express";
 import {authenticate} from '../modules/sessionMiddleware.js'
-import {insert, selectAllWhere} from "../modules/db.js";
+import {insert, selectReviews} from "../modules/db.js";
 import type { Request, Response } from 'express';
 import {type Review, type Session} from '../modules/types.js'
 import {getSession} from "../modules/sessionUtils.js";
@@ -28,24 +28,22 @@ router.post("/", async (req: Request, res: Response) => {
 })
 
 router.get('/:bookId', async (req: Request, res: Response) => {
-    const bookId = req.params.bookId[0];
+    const {bookId} = req.params;
+    if (typeof bookId !== 'string') return res.status(400).send({
+        success: false,
+        message: "No review"
+    })
     if (!bookId) {
         return res.status(400).send({
             success: false,
             message: "No book Id sent"
         })
     }
-    const response  = selectAllWhere('review', 'book_id', bookId)
+    const response  = selectReviews(bookId)
     if (!response.success) {
         return res.status(500).send(response)
     }
     return res.status(200).send(response)
 })
-
-
-
-
-
-
 
 export default router;

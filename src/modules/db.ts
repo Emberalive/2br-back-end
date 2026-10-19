@@ -1,7 +1,7 @@
 import fs from "node:fs";
-import {type FuncResponse, queryResponse} from './types.js'
+import {type FuncResponse, QueryResult} from './types.js'
 import {DatabaseSync, type SQLInputValue, SQLOutputValue} from 'node:sqlite';
-import {logFormatError, logFormatProcess, logFormatSuccess} from './textFormatting.js'
+import {logFormatError, logFormatProcess, logFormatSuccess, logFormatWarning} from './textFormatting.js'
 
 export const db = new DatabaseSync('2br.db');
 db.exec('PRAGMA foreign_keys = ON');
@@ -41,11 +41,11 @@ export default function selectOne<T>(table:string, column:string, value:string):
     }
 }
 
-export function selectAll(table:string):queryResponse | FuncResponse {
+export function selectAll<T>(table:string):QueryResult<T> {
     try {
         const stmnt:string = `SELECT * FROM ${table}`;
         return {
-            rows: db.prepare(stmnt).all(),
+            rows: db.prepare(stmnt).all() as T[],
             success: true,
         }
     } catch (e) {
@@ -57,21 +57,45 @@ export function selectAll(table:string):queryResponse | FuncResponse {
     }
 }
 
-export function selectAllWhere(table:string, column:string, columnValue:string):queryResponse | FuncResponse {
+export function selectAllWhere<T>(table:string, column:string, columnValue:string):QueryResult<T> {
     try {
-        const stmnt:string = `SELECT * FROM ? WHERE ? = ?`;
+        const stmnt:string = `SELECT * FROM "${table}" WHERE "${column}" = ?`;
+        const rows = db.prepare(stmnt).all(columnValue) as T[]
+        logFormatWarning(JSON.stringify(rows, null, 2));
         return {
-            rows: db.prepare(stmnt).all(table, column, columnValue),
+            rows,
             success: true,
         }
     } catch (e) {
-        logFormatError(`[Server - selectOne] Query failed: ${e}`);
+        logFormatError(`[Server - selectAllWhere] Query failed: ${e}`);
         return {
             success: false,
             message: "Failed db read"
         }
     }
+}
 
+export function selectReviews<T>(bookId:string):QueryResult<T> {
+    try {
+        const stmnt:string =
+            `SELECT r.created_at, r.id, r.content, u.username 
+             FROM review r
+             JOIN user u ON u.id = r.user_id
+             WHERE r.book_id = ?
+             ORDER BY r.created_at DESC`;
+        const rows = db.prepare(stmnt).all(bookId) as T[]
+        logFormatWarning(JSON.stringify(rows, null, 2));
+        return {
+            rows,
+            success: true,
+        }
+    } catch (e) {
+        logFormatError(`[Server - selectAllWhere] Query failed: ${e}`);
+        return {
+            success: false,
+            message: "Failed db read"
+        }
+    }
 }
 
 export function selectAllBooks() {
@@ -91,9 +115,10 @@ export function selectAllBooks() {
 export function selectAllUserBooks(userId:string) {
     const stmnt:string = `
         SELECT b.id, b.title, b.cover, json_group_array(a.name) AS authors
-        FROM book b
+        FROM book_user bu
         JOIN book_author ba ON ba.book_id = b.id
         JOIN author a ON a.id = ba.author_id
+        JOIN book b on b.id = bu.book_id
         WHERE user_id = ?
         GROUP BY b.id
     `;

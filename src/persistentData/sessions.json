@@ -1,10 +1,70 @@
 {
   "sessions": [
     {
-      "sessionId": "52e771e5-db31-4266-babc-05ce63c00716",
+      "sessionId": "bf045584-2630-4c1f-8f23-e42ecdacb303",
       "userId": "3062ade6-feeb-486b-8af1-aa87a33df68b",
-      "createdAt": "2026-10-17T20:28:54.071Z",
-      "expiresAt": "2026-10-18T20:28:54.071Z"
+      "createdAt": "2026-10-18T21:51:23.694Z",
+      "expiresAt": "2026-10-19T21:51:23.694Z"
+    },
+    {
+      "sessionId": "e905ca52-72a1-467a-a88d-6a94dd740bcc",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-18T21:55:55.911Z",
+      "expiresAt": "2026-10-19T21:55:55.911Z"
+    },
+    {
+      "sessionId": "206bd6e5-50e2-4072-823d-f23987a8c9ef",
+      "userId": "6e409e9f-147b-44e3-929b-6cd2e2dac6a6",
+      "createdAt": "2026-10-18T22:03:59.581Z",
+      "expiresAt": "2026-10-19T22:03:59.581Z"
+    },
+    {
+      "sessionId": "70b6e95f-667f-49dc-b5ed-13c40bdf93aa",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-18T22:05:17.699Z",
+      "expiresAt": "2026-10-19T22:05:17.699Z"
+    },
+    {
+      "sessionId": "e9c696a1-5473-4076-9478-bd8957fd7a86",
+      "userId": "6e409e9f-147b-44e3-929b-6cd2e2dac6a6",
+      "createdAt": "2026-10-18T22:05:32.473Z",
+      "expiresAt": "2026-10-19T22:05:32.473Z"
+    },
+    {
+      "sessionId": "9190ef10-812b-4a78-ace5-70c68a5cb428",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-18T22:06:10.726Z",
+      "expiresAt": "2026-10-19T22:06:10.726Z"
+    },
+    {
+      "sessionId": "40e364d9-647d-4c66-86e1-86337a2317f6",
+      "userId": "6e409e9f-147b-44e3-929b-6cd2e2dac6a6",
+      "createdAt": "2026-10-18T22:42:40.715Z",
+      "expiresAt": "2026-10-19T22:42:40.715Z"
+    },
+    {
+      "sessionId": "0a39fa53-b382-4b6b-a975-458fe4c6c8b3",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-18T22:48:52.486Z",
+      "expiresAt": "2026-10-19T22:48:52.486Z"
+    },
+    {
+      "sessionId": "477da6b5-d626-4ab2-b6d6-cce55fd1daa1",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-19T01:36:22.894Z",
+      "expiresAt": "2026-10-20T01:36:22.894Z"
+    },
+    {
+      "sessionId": "1a284940-4c83-4a2c-b280-f68a7391220e",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-19T01:38:10.967Z",
+      "expiresAt": "2026-10-20T01:38:10.967Z"
+    },
+    {
+      "sessionId": "c2973b3f-0091-484a-a92a-34d3bdd54fe6",
+      "userId": "46b6322f-328d-44ca-83ad-608f26adbb51",
+      "createdAt": "2026-10-19T01:52:57.643Z",
+      "expiresAt": "2026-10-20T01:52:57.643Z"
     }
   ]
 }
