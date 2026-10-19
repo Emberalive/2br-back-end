@@ -1,8 +1,8 @@
 import {getSession} from './sessionUtils.js';
-import type {Session} from './sessionUtils.js'
+import type {Session} from './types.js'
 import type { Request, Response, NextFunction } from 'express';
 import selectOne from "./db.js";
-import {type User} from "../routes/user.js";
+import {type User} from "./types.js";
 import {logFormatError, logFormatSuccess, logFormatWarning} from "./textFormatting.js";
 
 /**

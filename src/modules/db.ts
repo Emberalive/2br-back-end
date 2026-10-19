@@ -114,7 +114,7 @@ export function selectAllBooks() {
 
 export function selectAllUserBooks(userId:string) {
     const stmnt:string = `
-        SELECT b.id, b.title, b.cover, json_group_array(a.name) AS authors
+        SELECT bu.finished, bu.leant, bu.leant_to, b.id, b.title, b.cover, json_group_array(a.name) AS authors
         FROM book_user bu
         JOIN book_author ba ON ba.book_id = b.id
         JOIN author a ON a.id = ba.author_id

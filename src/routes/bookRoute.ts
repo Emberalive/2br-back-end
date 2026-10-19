@@ -96,10 +96,14 @@ router.get('/getall/user', async (req: Request, res: Response) => {
     }
     const books = selectAllUserBooks(sessionObject.userId)
     logFormatProcess(`[Server - /book] Getall: ${JSON.stringify(books, null, 2)}`)
-    return res.status(200).send({
+    return res.status(200).json({
         success: true,
-        books: books,
-    })
+        books: books.map(r => ({
+            ...r,
+            finished: Boolean(r.finished),
+            leant: Boolean(r.leant),
+        })),
+    });
 })
 
 // router.get('/getAll/:userId', async (req: Request, res: Response) => {
