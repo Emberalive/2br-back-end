@@ -147,27 +147,37 @@ export function insert(table:Table, params:SQLInputValue[]):FuncResponse {
     }
 }
 
-export function bookInsert (bookId:string, authors:string[], cover:string, title:string, userId:string): FuncResponse {
-    db.exec('BEGIN')
+export function bookInsert(bookId: string, authors: string[], cover: string, title: string, userId: string): FuncResponse {
+    db.exec('BEGIN');
     try {
-        insert("book", [bookId, title, cover])
-        insert("book_user", [bookId, userId])
+        db.prepare(`INSERT INTO book (id, title, cover) VALUES (?, ?, ?) ON CONFLICT DO NOTHING`)
+            .run(bookId, title, cover);
+
+        const link = db.prepare(`INSERT INTO book_user (book_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING`)
+            .run(bookId, userId);
+
+        if (link.changes === 0) {
+            db.exec('ROLLBACK');
+            return { success: false, message: "Book already in library" };
+        }
+
+        const insertAuthor = db.prepare(`INSERT INTO author (name) VALUES (?) ON CONFLICT DO NOTHING`);
+        const linkAuthor = db.prepare(`
+            INSERT INTO book_author (book_id, author_id)
+            SELECT ?, id FROM author WHERE name = ?
+            ON CONFLICT DO NOTHING
+        `);
+
         for (const author of authors) {
-            db.prepare(`INSERT OR IGNORE INTO author (name) VALUES(?)`).run(author)
-            db.prepare(`INSERT INTO book_author (book_id, author_id) SELECT ?, id FROM author WHERE name = ?`)
-                .run(bookId, author)
+            insertAuthor.run(author);
+            linkAuthor.run(bookId, author);
         }
-        db.exec('COMMIT')
+
+        db.exec('COMMIT');
     } catch (err) {
-        db.exec('ROLLBACK')
-        logFormatError(`Database operation failed: ${err}`)
-        return {
-            success: false,
-            message: "Could not insert book",
-        }
+        db.exec('ROLLBACK');
+        logFormatError(`Database operation failed: ${err}`);
+        return { success: false, message: "Could not insert book" };
     }
-    return {
-        success: true,
-        message: "Successfully inserted into book"
-    }
+    return { success: true, message: "Successfully inserted into book" };
 }
