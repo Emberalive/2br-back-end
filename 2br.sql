@@ -13,6 +13,10 @@ create table if not exists book (
 create table if not exists book_user (
     book_id TEXT NOT NULL REFERENCES book(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+--     meta-data for users has not been implemented yet
+    finished BOOLEAN NOT NULL DEFAULT false,
+    leant BOOLEAN NOT NULL DEFAULT false,
+    leant_to TEXT,
     PRIMARY KEY (book_id, user_id)
 );
 
