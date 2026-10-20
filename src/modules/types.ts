@@ -1,5 +1,3 @@
-import {SQLOutputValue} from "node:sqlite";
-
 export type Book = {
     id: string;
     author: string[];

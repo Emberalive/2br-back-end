@@ -106,30 +106,11 @@ router.get('/getall/user', async (req: Request, res: Response) => {
     });
 })
 
-// router.get('/getAll/:userId', async (req: Request, res: Response) => {
-//     const id = req.params.userId;
-//     if (!id) {
-//         console.log('[Server GET - /book/getAll/:userId] ID is missing')
-//         return res.status(400).send({
-//             error: 'ID is missing',
-//             success: false,
-//         })
-//     }
-//     if (typeof id !== "string") {
-//         console.log('[Server GET - /book/getAll/:userId] ID is not a string')
-//         return res.status(400).send({
-//             error: 'id must be a string',
-//             success: false
-//         })
-//     }
-//     return res.status(501).send({
-//         error: 'Not implemented',
-//         success: false,
-//     });
-//     /**
-//      * get all user's books from the database
-//      * and return retrieved
-//      */
-// })
+router.patch('/', async (req: Request, res: Response) => {
+    return res.status(500).send({
+        success: false,
+        message: "endpoint not implemented"
+    })
+})
 
 export default router;
