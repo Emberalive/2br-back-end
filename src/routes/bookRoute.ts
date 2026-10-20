@@ -46,7 +46,8 @@ router.post('/', async (req: Request, res: Response) => {
         });
     }
 
-    bookInsert(data.id, data.author, data.cover, data.title, sessionObject.userId)
+    const response = bookInsert(data.id, data.author, data.cover, data.title, sessionObject.userId)
+    if (!response.success) res.status(500).send(response)
     return res.status(201).send({
         book: data,
         success: true,
@@ -72,10 +73,6 @@ router.get('/:id', async (req: Request, res: Response) => {
         error: 'Not implemented',
         success: false,
     });
-    /**
-     * request from database
-     * and return book object retrieved
-     */
 })
 
 router.get('/getall', async (req: Request, res: Response) => {

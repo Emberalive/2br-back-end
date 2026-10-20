@@ -174,10 +174,10 @@ export function bookInsert(bookId: string, authors: string[], cover: string, tit
         }
 
         db.exec('COMMIT');
+        return { success: true, message: "Successfully inserted into book" };
     } catch (err) {
         db.exec('ROLLBACK');
         logFormatError(`Database operation failed: ${err}`);
         return { success: false, message: "Could not insert book" };
     }
-    return { success: true, message: "Successfully inserted into book" };
 }
