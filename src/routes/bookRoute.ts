@@ -1,10 +1,11 @@
 import express from "express";
-import {bookInsert, selectAllBooks, selectAllUserBooks} from '../modules/db.js'
+import {bookInsert, selectAllBooks, selectAllUserBooks, bookPatch} from '../modules/db.js'
 import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} from '../modules/textFormatting.js'
 import {authenticate} from '../modules/sessionMiddleware.js'
 import {getSession} from '../modules/sessionUtils.js'
 import type { Request, Response } from 'express';
 import {bookInfo} from "../modules/books.js"
+import {type Book} from '../modules/types.js'
 
 const router = express.Router();
 router.use(authenticate)
@@ -104,10 +105,11 @@ router.get('/getall/user', async (req: Request, res: Response) => {
 })
 
 router.patch('/', async (req: Request, res: Response) => {
-    return res.status(500).send({
-        success: false,
-        message: "endpoint not implemented"
-    })
+    const values = req.body.changes.values
+    values.push(req.body.user_id, req.body.book_id)
+
+    const result = bookPatch(req.body.changes.params, values)
+    return res.status(result.success ? 201 : 500).send(result)
 })
 
 export default router;

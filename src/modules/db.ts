@@ -12,7 +12,7 @@ db.exec('PRAGMA foreign_keys = ON');
 const insertRows: Record<string, string[]> = {
     book: ['id', 'title', 'cover'],
     user: ['id', 'username', 'password'],
-    book_user: ['book_id', 'user_id'],
+    book_user: ['book_id', 'user_id', "finished", "leant", "leant_to"],
     review: ['id', 'content', 'book_id', 'user_id'],
 };
 // rows.book; // ['id', 'title', 'author', 'cover']
@@ -179,5 +179,43 @@ export function bookInsert(bookId: string, authors: string[], cover: string, tit
         db.exec('ROLLBACK');
         logFormatError(`Database operation failed: ${err}`);
         return { success: false, message: "Could not insert book" };
+    }
+}
+
+export function bookPatch (params:string[], values:string[]):{success: boolean, message:string} {
+    const allowed = insertRows['book_user'];
+
+    if (!allowed) {
+        logFormatError('Table book_user not found')
+        return { success: false, message: `Table book_user not found.` };
+    }
+
+    if (params.length === 0) {
+        logFormatError('No columns to update')
+        return { success: false, message: 'No columns to update.' };
+    }
+
+    for (const column of params) {
+        if (!allowed.includes(column)) {
+            logFormatError(`Column ${column} not found.`);
+            return { success: false, message: `Column ${column} not found.` };
+        }
+    }
+    const setClause:string = params.map((column) => `${column} = ?`).join(', ');
+    const query:string = `UPDATE book_user SET ${setClause} WHERE (user_id, book_id) = (?, ?) RETURNING *`
+    logFormatProcess(query)
+    try {
+        db.prepare(query).run(...values)
+        logFormatSuccess('Successfully updated book')
+        return {
+            success: true,
+            message: 'Successfully updated book'
+        }
+    } catch (e) {
+        logFormatError(`Database operation failed: ${e}`);
+        return {
+            success: false,
+            message: "Could not update book"
+        }
     }
 }

@@ -5,11 +5,6 @@ export type Book = {
     title: string;
 }
 
-export type UserFrontEnd = {
-    id: string;
-    username: string;
-}
-
 export type FuncResponse = {
     success: boolean;
     message: string;
