@@ -16,6 +16,7 @@ create table if not exists book_user (
     finished BOOLEAN NOT NULL DEFAULT false,
     leant BOOLEAN NOT NULL DEFAULT false,
     leant_to TEXT DEFAULT "",
+    leant_at TEXT DEFAULT "",
     PRIMARY KEY (book_id, user_id)
 );
 
@@ -24,7 +25,7 @@ create table if not exists review (
     content TEXT NOT NULL,
     book_id TEXT NOT NULL REFERENCES book(id),
     user_id TEXT NOT NULL REFERENCES user(id),
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TEXT NOT NULL
 );
 
 create table if not exists author (

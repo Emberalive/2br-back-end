@@ -12,8 +12,8 @@ db.exec('PRAGMA foreign_keys = ON');
 const insertRows: Record<string, string[]> = {
     book: ['id', 'title', 'cover'],
     user: ['id', 'username', 'password'],
-    book_user: ['book_id', 'user_id', "finished", "leant", "leant_to"],
-    review: ['id', 'content', 'book_id', 'user_id'],
+    book_user: ['book_id', 'user_id', "finished", "leant", "leant_to", "leant_at"],
+    review: ['id', 'content', 'book_id', 'user_id', 'created_at'],
 };
 // rows.book; // ['id', 'title', 'author', 'cover']
 
@@ -100,7 +100,7 @@ export function selectReviews<T>(bookId:string):QueryResult<T> {
 
 export function selectAllBooks() {
     const stmnt:string = `
-        SELECT b.id, b.title, b.cover, json_group_array(a.name) AS authors
+        SELECT b.id, b.title, b.cover, json_group_array(a.name) AS author
         FROM book b
         JOIN book_author ba ON ba.book_id = b.id
         JOIN author a ON a.id = ba.author_id
@@ -108,13 +108,13 @@ export function selectAllBooks() {
     `;
     return db.prepare(stmnt).all().map((row: any) => ({
         ...row,
-            authors: JSON.parse(row.authors),
+            author: JSON.parse(row.author),
     }));
 }
 
 export function selectAllUserBooks(userId:string) {
     const stmnt:string = `
-        SELECT bu.finished, bu.leant, bu.leant_to, b.id, b.title, b.cover, json_group_array(a.name) AS authors
+        SELECT bu.finished, bu.leant, bu.leant_to, bu.leant_at, b.id, b.title, b.cover, json_group_array(a.name) AS author
         FROM book_user bu
         JOIN book_author ba ON ba.book_id = b.id
         JOIN author a ON a.id = ba.author_id
@@ -124,7 +124,7 @@ export function selectAllUserBooks(userId:string) {
     `;
     return db.prepare(stmnt).all(userId).map((row: any) => ({
         ...row,
-        authors: JSON.parse(row.authors),
+        author: JSON.parse(row.author),
     }));
 }
 

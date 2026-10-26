@@ -23,7 +23,7 @@ router.post("/", async (req: Request, res: Response) => {
         book_id: req.body.book_id,
         user_id: sessionObj.userId,
     };
-    const response = insert('review', [review.id, review.content, review.book_id, review.user_id])
+    const response = insert('review', [review.id, review.content, review.book_id, review.user_id, new Date().toLocaleDateString('en-GB')])
     return res.status(200).send(response);
 })
 
