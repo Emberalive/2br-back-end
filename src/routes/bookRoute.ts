@@ -4,8 +4,7 @@ import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} fr
 import {authenticate} from '../modules/sessionMiddleware.js'
 import {getSession} from '../modules/sessionUtils.js'
 import type { Request, Response } from 'express';
-import {bookByIsbn, bookByTitle, bookInfo} from "../modules/books.js"
-import {type Book} from '../modules/types.js'
+import {bookByIsbn, bookByTitle} from "../modules/books.js"
 
 const router = express.Router();
 router.use(authenticate)
