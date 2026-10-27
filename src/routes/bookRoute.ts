@@ -4,7 +4,7 @@ import {logFormatWarning, logFormatProcess, logFormatSuccess, logFormatError} fr
 import {authenticate} from '../modules/sessionMiddleware.js'
 import {getSession} from '../modules/sessionUtils.js'
 import type { Request, Response } from 'express';
-import {bookInfo} from "../modules/books.js"
+import {bookByIsbn, bookByTitle, bookInfo} from "../modules/books.js"
 import {type Book} from '../modules/types.js'
 
 const router = express.Router();
@@ -12,17 +12,20 @@ router.use(authenticate)
 
 router.post('/', async (req: Request, res: Response) => {
     console.log('[Server POST - /book] STARTING')
-    const param = req.body.param;
-    if (!param) {
-        logFormatError('[Server - /book] No parameter sent');
-        return res.status(400).send({message: "Invalid parameter", success:false});
+    const {title, author} = req.body;
+    const {isbn} = req.body
+    let data
+    if (isbn) {
+        data = await bookByIsbn(isbn)
+    } else {
+        if (!title && !author) {
+            logFormatError('[Server - /book] No parameter sent');
+            return res.status(400).send({message: "Invalid parameter", success:false});
+        }
+        data = await bookByTitle(title, author)
     }
-    if (typeof param !== 'number' && typeof param !== 'string') {
-        logFormatError(`[Server - /book] invalid parameter type: ${JSON.stringify(param)}`);
-        return res.status(400).json({ message: 'value must be a number or string', success: false });
-    }
+
     logFormatSuccess('[Server - /book] parameters are valid')
-    const data = await bookInfo(param)
     if (!data) {
         logFormatWarning('[Server - /addBook] No book data returned')
         return res.status(400).send({
@@ -30,14 +33,6 @@ router.post('/', async (req: Request, res: Response) => {
             message:"Invalid book info"
         });
     }
-    logFormatProcess(`[Server - /book] Book:\n${JSON.stringify(data, null, 2)}`);
-    if (!data) {
-        return res.status(404).send({
-            success: false,
-            message: "no Book found"
-        });
-    }
-
     const sessionObject = await getSession(req.headers['x-session-id'])
     //only need to verify session exists so TypeScript knows it's not false
     if (!sessionObject) {
@@ -53,6 +48,27 @@ router.post('/', async (req: Request, res: Response) => {
         book: data,
         success: true,
     })
+})
+
+router.get('/:id', async (req: Request, res: Response) => {
+    const id = req.params.id;
+    if (!id) {
+        console.log('[Server GET - /book/:id] ID is missing')
+        return res.status(400).send({
+            error: 'ID is missing',
+            success: false,
+        });
+    }
+    if (typeof id !== "string") {
+        return res.status(400).send({
+            error: 'id must be a string',
+            success: false
+        });
+    }
+    return res.status(501).send({
+        error: 'Not implemented',
+        success: false,
+    });
 })
 
 router.get('/:id', async (req: Request, res: Response) => {

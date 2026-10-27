@@ -17,6 +17,24 @@
       "userId": "768f50e2-63b2-4881-ae49-90ad6e99eb72",
       "createdAt": "2026-10-26T23:37:00.547Z",
       "expiresAt": "2026-10-27T23:37:00.547Z"
+    },
+    {
+      "sessionId": "4b9aabdc-1a87-4e8a-97d9-f7e5afb485b4",
+      "userId": "61d5e022-c687-40a1-936c-8e5345a10456",
+      "createdAt": "2026-10-27T00:07:25.323Z",
+      "expiresAt": "2026-10-28T00:07:25.323Z"
+    },
+    {
+      "sessionId": "f990cf79-f416-4be8-8426-69519ae27f90",
+      "userId": "4da231b0-f12f-40b3-bde6-ae42b03b9272",
+      "createdAt": "2026-10-27T00:27:41.772Z",
+      "expiresAt": "2026-10-28T00:27:41.772Z"
+    },
+    {
+      "sessionId": "2eb97153-4fdd-4009-8466-c1b00cd1398e",
+      "userId": "2efa1273-1122-41e1-85e8-6ffcf4254065",
+      "createdAt": "2026-10-27T00:49:49.042Z",
+      "expiresAt": "2026-10-28T00:49:49.042Z"
     }
   ]
 }
